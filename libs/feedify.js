@@ -3,11 +3,11 @@
 
 var jsonFeed = {
   'version': 'https://jsonfeed.org/version/1',
-  'title': 'Amazon Daily Deal',
-  'home_page_url': 'https://gverni.github.com/',
-  'feed_url': 'https://gverni.github.com/',
+  'title': 'Amazon UK Kindle Daily Deal',
+  'home_page_url': 'https://github.com/gverni',
+  'feed_url': 'https://sakscraper.herokuapp.com/amdduk',
   'author': {
-    'url': 'https://gvernigithub.com/',
+    'url': 'https://github.com/gverni',
     'name': 'Giuseppe Verni'
   },
   'icon': 'https://www.amazon.it/favicon.ico',
@@ -21,7 +21,6 @@ function feedify (itemsList) {
     jsonFeed.items.push({
       id: item.image,
       "date_published" : "2018-04-19T00:00:15Z",
-      "date_modified" : "2018-04-19T00:00:16Z",
       title: item.title,
       image: item.image,
       "content_text": item.content
