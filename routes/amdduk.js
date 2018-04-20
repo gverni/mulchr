@@ -7,7 +7,8 @@ var feedify = require('../libs/feedify')
 router.get('/', function (req, res, next) {
   amazonDailyDealUKscraper()
     .then(function (response) {
-      res.send(feedify(response))
+      res.setHeader('Content-Type', 'application/json; charset=utf-8')
+      res.send(JSON.stringify(feedify(response)))
     })
 })
 

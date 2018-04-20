@@ -12,16 +12,19 @@ var jsonFeed = {
   },
   'icon': 'https://www.amazon.it/favicon.ico',
   'favicon': 'https://www.amazon.it/favicon.ico',
-  item: []
+  items: []
 }
 
 function feedify (itemsList) {
-  jsonFeed.item = []
+  jsonFeed.items = []
   itemsList.forEach((item, index) => {
-    jsonFeed.item.push({
-      id: index,
+    jsonFeed.items.push({
+      id: item.image,
+      "date_published" : "2018-04-19T00:00:15Z",
+      "date_modified" : "2018-04-19T00:00:16Z",
       title: item.title,
-      image: item.image
+      image: item.image,
+      "content_text": item.content
     })
   })
   return jsonFeed

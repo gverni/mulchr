@@ -28,7 +28,7 @@ function fetchAndScrape () {
         console.log('Carousel found')
         $(dailyDealCarousel).find(titleSelector).each(function () {
           // console.log($(this).text())
-          results.push({title: $(this).text()})
+          results.push({title: $(this).text(), content: $(this).text()})
         })
         $(dailyDealCarousel).find(imageUrlSelector).each(function (index) {
           results[index].image = $(this).prop('src')
