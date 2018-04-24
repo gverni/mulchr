@@ -1,6 +1,6 @@
 var express = require('express')
 var router = express.Router()
-var amazonDailyDealUKscraper = require('../libs/amazonDailyDealsUKScraper')
+var amazonDailyDealUKscraper = require('../libs/amazonUkKindleDailyDealsScraper')
 var feedify = require('../libs/feedify')
 
 /* GET home page. */

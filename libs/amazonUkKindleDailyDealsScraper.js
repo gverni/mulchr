@@ -1,7 +1,6 @@
 const fetch = require('node-fetch')
 const cheerio = require('cheerio')
 const dailyDealUKUrl = 'https://www.amazon.co.uk/Kindle-Daily-Deals/b/ref=sv_kinc_5?node=5400977031'
-const dailyDealElementTemplate = { title: '', imageUrl: '', author: '', price: '', rating: '', reviewCount: '', productUrl: '' }
 
 // Selectors
 const titleSelector = '.acs_product-title span'
