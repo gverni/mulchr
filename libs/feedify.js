@@ -3,7 +3,7 @@
 
 var jsonFeed = {
   'version': 'https://jsonfeed.org/version/1',
-  'title': 'Amazon UK Kindle Daily Deal',
+  'title': 'Amazon UK Kindle Daily Deals',
   'home_page_url': 'https://github.com/gverni',
   'feed_url': 'https://sakscraper.herokuapp.com/amdduk',
   'author': {
@@ -19,11 +19,14 @@ function feedify (itemsList) {
   jsonFeed.items = []
   itemsList.forEach((item, index) => {
     jsonFeed.items.push({
-      id: item.image,
-      "date_published" : "2018-04-19T00:00:15Z",
+      id: item.productUrl,
+      url: item.productUrl,
       title: item.title,
       image: item.image,
-      "content_text": item.content
+      'content_html': '<p>Title: ' + item.title + '</p>' +
+       '<p>Author: ' + item.author + '</p>' +
+       '<p>Reviews: ' + item.rating + ' stars (' + item.reviewCount + ' reviews)</p>' +
+       '<p>Deal price: ' + item.price + '</p>'
     })
   })
   return jsonFeed

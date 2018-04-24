@@ -6,10 +6,10 @@ const dailyDealElementTemplate = { title: '', imageUrl: '', author: '', price: '
 // Selectors
 const titleSelector = '.acs_product-title span'
 const imageUrlSelector = '.acs_product-image img'
-const authorSelector = 'acs_product-metadata__contributors'
-const priceSelector = 'acs_product-price__buying'
-const ratingSelector = ''
-const reviewCountSelector = 'acs_product-rating__review-count'
+const authorSelector = '.acs_product-metadata__contributors'
+const priceSelector = '.acs_product-price__buying'
+const ratingSelector = '.a-icon-star-small'
+const reviewCountSelector = '.acs_product-rating__review-count'
 const productUrlSelector = '.acs_product-title a'
 
 function fetchAndScrape () {
@@ -18,7 +18,7 @@ function fetchAndScrape () {
     .then(responseHtml => {
       const $ = cheerio.load(responseHtml)
       var dailyDealCarousel
-      let results = [] 
+      let results = []
       $('.acswidget-carousel__title').each(function (i, elem) {
         if ($(elem).text() === 'Today\'s Kindle Daily Deal') {
           dailyDealCarousel = elem.parent.parent
@@ -32,6 +32,24 @@ function fetchAndScrape () {
         })
         $(dailyDealCarousel).find(imageUrlSelector).each(function (index) {
           results[index].image = $(this).prop('src')
+        })
+        $(dailyDealCarousel).find(authorSelector).each(function (index) {
+          results[index].author = $(this).text()
+        })
+        $(dailyDealCarousel).find(priceSelector).each(function (index) {
+          results[index].price = $(this).text()
+        })
+        $(dailyDealCarousel).find(reviewCountSelector).each(function (index) {
+          results[index].reviewCount = $(this).text()
+        })
+        $(dailyDealCarousel).find(productUrlSelector).each(function (index) {
+          results[index].productUrl = 'https://amazon.co.uk' + $(this).prop('href')
+        })
+        $(dailyDealCarousel).find(ratingSelector).each(function (index) {
+          let res = /\sa-star-small-(.*?)\s/g.exec($(this).attr('class'))
+          if (res.length > 0) {
+            results[index].rating = res[1].replace('-', '.')
+          }
         })
       }
       return Promise.resolve(results)
