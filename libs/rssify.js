@@ -24,6 +24,10 @@ const uriEncode = require('strict-uri-encode')
 const rss2DocHeader = '<?xml version="1.0" encoding="UTF-8" ?>\n<rss version="2.0">\n<channel>'
 const rss2DocFooter = '\n</channel>\n</rss>'
 
+function uriEncodeUrl (url) {
+  return url.split('?')[0] + (url.split('?')[1] ? '?' + uriEncode(url.split('?')[1]) : '')
+}
+
 function rssify (channelInfo, itemsList, fnFormatDescription) {
   var rssFeed = rss2DocHeader
   // Filling up channel info
@@ -34,8 +38,8 @@ function rssify (channelInfo, itemsList, fnFormatDescription) {
   itemsList.forEach((item) => {
     let tmpFeedItem = '<item>' +
             '<title>' + item.title + '</title>' +
-            '<guid isPermaLink="true">' + uriEncode(item.productUrl) + '</guid>' + // TODO: change productUrl to product in existing scraper
-            '<link>' + uriEncode(item.productUrl) + '</link>' +
+            '<guid isPermaLink="true">' + uriEncodeUrl(item.productUrl) + '</guid>' + // TODO: change productUrl to product in existing scraper
+            '<link>' + uriEncodeUrl(item.productUrl) + '</link>' +
             '<description><![CDATA[' + fnFormatDescription(item) + ']]></description>' +
             '</item>'
     rssFeed += tmpFeedItem
