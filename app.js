@@ -22,14 +22,22 @@ app.use(express.urlencoded({ extended: false }))
 app.use(cookieParser())
 app.use(express.static(path.join(__dirname, 'public')))
 
+app.locals.updateCache = function () {
+  console.log('Saving cache')
+  try {
+    jsonfile.writeFileSync('cachedb.json', app.locals.cachedb) 
+  } catch (error) {
+    console.log('Error writing file ' + error)
+  }
+}
+
 try {
   app.locals.cachedb = jsonfile.readFileSync('cachedb.json')
 } catch (error) {
   console.log('Error opening cachedb: ' + error)
-  jsonfile.writeFileSync('cachedb.json', {})
   app.locals.cachedb = {}
+  app.locals.updateCache()
 }
-app.locals.updateCache = function () { jsonfile.writeFileSync('cachedb.json', app.locals.cachedb) }
 
 // app.use('/', indexRouter)
 // app.use('/users', usersRouter)
