@@ -36,6 +36,17 @@ router.get('/', function (req, res, next) {
   scraper('https://www.amazon.co.uk/Kindle-Daily-Deals/b/ref=sv_kinc_5?node=5400977031', selectCarousel, selectors)
     .then(function (response) {
       res.setHeader('Content-Type', 'application/xml')
+      if (req.app.locals.cachedb.hasOwnProperty('amUKKiDaDe') &&
+        req.app.locals.cachedb['amUKKiDaDe'][0].title === response[0].title) {
+        // We compare the title, because Amazon is actually changing the url
+        // for the same product
+        console.log('Using Cache')
+        response = req.app.locals.cachedb['amUKKiDaDe']
+      } else {
+        console.log('Updating cache')
+        req.app.locals.cachedb['amUKKiDaDe'] = response
+        req.app.locals.updateCache()
+      }
       res.send(rssify({title: 'Amazon UK Kindle Daily Deals',
         description: 'Amazon UK Kindle Daily Deals',
         url: 'https://sakscraper.herokuapp.com/amUKKiDaDeRSS'},
