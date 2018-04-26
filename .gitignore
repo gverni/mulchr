@@ -1,3 +1,7 @@
+# local cache / settings
+
+cachedb.json
+
 # Logs
 logs
 *.log
