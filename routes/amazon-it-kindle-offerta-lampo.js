@@ -28,7 +28,7 @@ var selectors = {
   price: { selector: '.acs_product-price__buying', fnExtractValue: getText },
   rating: { selector: '.a-icon-star-small', fnExtractValue: getRating },
   reviewCount: { selector: '.acs_product-rating__review-count', fnExtractValue: getText },
-  url: { selector: '.acs_product-title a', fnExtractValue: function (elem) { return 'https://amazon.co.uk' + elem.prop('href') } }
+  url: { selector: '.acs_product-title a', fnExtractValue: function (elem) { return 'https://amazon.it' + elem.prop('href') } }
 }
 
 /* GET home page. */
