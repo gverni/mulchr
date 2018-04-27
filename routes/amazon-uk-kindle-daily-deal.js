@@ -35,28 +35,29 @@ var selectors = {
 router.get('/', function (req, res, next) {
   scraper('https://www.amazon.co.uk/Kindle-Daily-Deals/b/ref=sv_kinc_5?node=5400977031', selectCarousel, selectors)
     .then(function (response) {
+      let myUrl = req.baseUrl.slice(1)
       res.setHeader('Content-Type', 'application/xml')
-      if (req.app.locals.cachedb.hasOwnProperty('amUKKiDaDe') &&
-        req.app.locals.cachedb['amUKKiDaDe'][0].title === response[0].title) {
+      if (req.app.locals.cachedb.hasOwnProperty(myUrl) &&
+        req.app.locals.cachedb[myUrl][0].title === response[0].title) {
         // We compare the title, because Amazon is actually changing the url
         // for the same product
         console.log('Using Cache')
-        response = req.app.locals.cachedb['amUKKiDaDe']
+        response = req.app.locals.cachedb[myUrl]
       } else {
         console.log('Updating cache')
-        req.app.locals.cachedb['amUKKiDaDe'] = response
+        req.app.locals.cachedb[myUrl] = response
         req.app.locals.updateCache()
       }
       res.send(rssify({title: 'Amazon UK Kindle Daily Deals',
         description: 'Amazon UK Kindle Daily Deals',
-        url: 'https://sakscraper.herokuapp.com/amUKKiDaDeRSS'},
+        url: 'https:/mulchr.herokuapp.com/' + myUrl},
       response,
       function (item) {
         return '<p><img src="' + item.image + '"</p>' +
-          '<p>Title: ' + item.title + '</p>' +
-          '<p>Author: ' + item.author + '</p>' +
-          '<p>Reviews: ' + item.rating + ' stars (' + item.reviewCount + ' reviews)</p>' +
-          '<p>Deal price: ' + item.price + '</p>'
+          '<p><b>Title</b>: ' + item.title + '</p>' +
+          '<p><b>Author</b>: ' + item.author + '</p>' +
+          '<p><b>Reviews</b>: ' + item.rating + ' stars (' + item.reviewCount + ' reviews)</p>' +
+          '<p><b>Deal price</b>: ' + item.price + '</p>'
       }
       ))
     })
