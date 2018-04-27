@@ -48,8 +48,8 @@ router.get('/', function (req, res, next) {
         req.app.locals.cachedb[myUrl] = response
         req.app.locals.updateCache()
       }
-      res.send(rssify({title: 'Amazon UK Kindle Daily Deals',
-        description: 'Amazon UK Kindle Daily Deals',
+      res.send(rssify({title: 'Amazon Italia Offerta Lampo Kindle',
+        description: 'Amazon Italia Offerta Lampo Kindle',
         url: 'https:/mulchr.herokuapp.com/' + myUrl},
       response,
       function (item) {
