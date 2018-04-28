@@ -21,10 +21,15 @@ function selectCarousel ($) {
   return tmpElem
 }
 
+function getAuthor (elem) {
+  var matches = elem.text().match(/\t+(\S| )+?\n/g)
+  return matches[1].trim()
+}
+
 var selectors = {
   title: { selector: '.acs_product-title span', fnExtractValue: getText },
   image: { selector: '.acs_product-image img', fnExtractValue: function (elem) { return elem.prop('src') } },
-  author: { selector: '.acs_product-metadata__contributors', fnExtractValue: getText },
+  author: { selector: '.a-carousel-card.acswidget-carousel__card', fnExtractValue: getAuthor },
   price: { selector: '.acs_product-price__buying', fnExtractValue: getText },
   rating: { selector: '.a-icon-star-small', fnExtractValue: getRating },
   reviewCount: { selector: '.acs_product-rating__review-count', fnExtractValue: getText },
