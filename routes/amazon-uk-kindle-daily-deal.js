@@ -3,6 +3,20 @@ var router = express.Router()
 var rssify = require('../libs/rssify')
 const scraper = require('../libs/scraper')
 
+var serviceName = 'am-uk-kindle-daily-deal'
+
+var rssHeader = {title: 'Amazon UK Kindle Daily Deals',
+description: 'Amazon UK Kindle Daily Deals',
+url: 'https:/mulchr.herokuapp.com/' + serviceName}
+
+function formatRssItem (item) {
+  return '<p><img src="' + item.image + '"</p>' +
+    '<p><b>Title</b>: ' + item.title + '</p>' +
+    '<p><b>Author</b>: ' + item.author + '</p>' +
+    '<p><b>Reviews</b>: ' + item.rating + ' stars (' + item.reviewCount + ' reviews)</p>' +
+    '<p><b>Deal price</b>: ' + item.price + '</p>'
+}
+
 function getText (elem) { return elem.text() }
 function getRating (elem) {
   let res = /\sa-star-small-(.*?)\s/g.exec(elem.attr('class'))
@@ -34,33 +48,31 @@ var selectors = {
 /* GET home page. */
 router.get('/', function (req, res, next) {
   scraper('https://www.amazon.co.uk/Kindle-Daily-Deals/b/ref=sv_kinc_5?node=5400977031', selectCarousel, selectors)
-    .then(function (response) {
-      let myUrl = req.baseUrl.slice(1)
-      res.setHeader('Content-Type', 'application/xml')
-      if (req.app.locals.cachedb.hasOwnProperty(myUrl) &&
-        req.app.locals.cachedb[myUrl][0].title === response[0].title) {
-        // We compare the title, because Amazon is actually changing the url
-        // for the same product
-        console.log('Using Cache')
-        response = req.app.locals.cachedb[myUrl]
-      } else {
-        console.log('Updating cache')
-        req.app.locals.cachedb[myUrl] = response
-        req.app.locals.updateCache()
-      }
-      res.send(rssify({title: 'Amazon UK Kindle Daily Deals',
-        description: 'Amazon UK Kindle Daily Deals',
-        url: 'https:/mulchr.herokuapp.com/' + myUrl},
-      response,
-      function (item) {
-        return '<p><img src="' + item.image + '"</p>' +
-          '<p><b>Title</b>: ' + item.title + '</p>' +
-          '<p><b>Author</b>: ' + item.author + '</p>' +
-          '<p><b>Reviews</b>: ' + item.rating + ' stars (' + item.reviewCount + ' reviews)</p>' +
-          '<p><b>Deal price</b>: ' + item.price + '</p>'
-      }
-      ))
-    })
+  .then(function (response) {
+    res.setHeader('Content-Type', 'application/xml')
+    if (req.app.locals.cachedb.hasOwnProperty(serviceName) &&
+      req.app.locals.cachedb[serviceName][0].title === response[0].title) {
+      // We compare the title, because Amazon is actually changing the url
+      // for the same product
+      console.log('Using Cache')
+      response = req.app.locals.cachedb[serviceName]
+    } else {
+      console.log('Updating cache')
+      req.app.locals.cachedb[serviceName] = response
+      req.app.locals.updateCache()
+    }
+    res.send(rssify(rssHeader, response, formatRssItem))
+  })
+  .catch((error) => {
+    let serviceName = req.baseUrl.slice(1)
+    console.log(serviceName + ': ' + error)
+    // Send cache (if exists)
+    res.send(rssify(rssHeader,
+      req.app.locals.cachedb.hasOwnProperty(serviceName)
+        ? req.app.locals.cachedb[serviceName]
+        : [],
+      formatRssItem))
+  })
 })
 
 module.exports = router
