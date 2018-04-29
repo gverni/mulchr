@@ -8,20 +8,24 @@ function scrape (url, fnSectionSelector, itemsSelectors) {
       const $ = cheerio.load(responseHtml)
       var section = (fnSectionSelector) ? fnSectionSelector($) : null // TODO: handle error in finding section
       let results = []
-      for (let key in itemsSelectors) {
-        if (results.length === 0) {
-          $(itemsSelectors[key].selector, section).each(function (index) {
-            let tmpObj = {}
-            tmpObj[key] = itemsSelectors[key].fnExtractValue($(this))
-            results.push(tmpObj)
-          })
-        } else {
-          $(itemsSelectors[key].selector, section).each(function (index) {
-            results[index][key] = itemsSelectors[key].fnExtractValue($(this))
-          })
+      if (section === undefined) {
+        return Promise.reject(new Error('Section not found'))
+      } else {
+        for (let key in itemsSelectors) {
+          if (results.length === 0) {
+            $(itemsSelectors[key].selector, section).each(function (index) {
+              let tmpObj = {}
+              tmpObj[key] = itemsSelectors[key].fnExtractValue($(this))
+              results.push(tmpObj)
+            })
+          } else {
+            $(itemsSelectors[key].selector, section).each(function (index) {
+              results[index][key] = itemsSelectors[key].fnExtractValue($(this))
+            })
+          }
         }
+        return Promise.resolve(results)
       }
-      return Promise.resolve(results)
     })
 }
 
