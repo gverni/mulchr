@@ -1,5 +1,6 @@
 const fetch = require('node-fetch')
 const cheerio = require('cheerio')
+const debug = require('debug')('scraper')
 
 function scrape (url, fnSectionSelector, itemsSelectors) {
   return fetch(url)
@@ -24,6 +25,7 @@ function scrape (url, fnSectionSelector, itemsSelectors) {
             })
           }
         }
+        debug(results)
         return Promise.resolve(results)
       }
     })
