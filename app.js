@@ -12,6 +12,7 @@ const { Client } = require('pg')
 var fetcher = require('./routes/fetcher')
 var amazonUkKindleDailyDeal = require('./routes/amazon-uk-kindle-daily-deal')
 var amazonItKindleOffertaLampo = require('./routes/amazon-it-kindle-offerta-lampo')
+var audibleUkDailyDeal = require('./routes/audible-uk-daily-deal')
 
 var app = express()
 
@@ -113,6 +114,7 @@ if (process.env.DATABASE_URL) {
 app.use('/fetcher', fetcher)
 app.use('/am-uk-kindle-daily-deal', amazonUkKindleDailyDeal)
 app.use('/am-it-kindle-offerta-lampo', amazonItKindleOffertaLampo)
+app.use('/au-uk-daily-deal', audibleUkDailyDeal)
 
 // catch 404 and forward to error handler
 app.use(function (req, res, next) {
