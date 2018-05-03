@@ -3,7 +3,7 @@ const cheerio = require('cheerio')
 const debug = require('debug')('scraper')
 
 function scrape (url, fnSectionSelector, itemsSelectors) {
-  return fetch(url, {follow: 10})
+  return fetch(url)
     .then(response => response.text())
     .then(responseHtml => {
       const $ = cheerio.load(responseHtml)
