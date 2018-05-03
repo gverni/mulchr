@@ -6,14 +6,14 @@ const scraper = require('../libs/scraper')
 var serviceName = 'am-it-kindle-offerta-lampo'
 
 var rssHeader = {title: 'Amazon Italia Offerta Lampo Kindle',
-description: 'Amazon Italia Offerta Lampo Kindle',
-url: 'https:/mulchr.herokuapp.com/' + serviceName}
+  description: 'Amazon Italia Offerta Lampo Kindle',
+  url: 'https:/mulchr.herokuapp.com/' + serviceName}
 
 function formatRssItem (item) {
   return '<p><img src="' + item.image + '"</p>' +
   '<p><b>Titolo</b>: ' + item.title + '</p>' +
   '<p><b>Autore</b>: ' + item.author + '</p>' +
-  '<p><b>Recensioni</b>: ' + item.rating + ' stelle (' + item.reviewCount + ' recensioni clienti)</p>' +
+  (item.rating ? '<p><b>Recensioni</b>: ' + item.rating + ' stelle (' + item.reviewCount + ' recensioni clienti)</p>' : '') +
   '<p><b>prezzo</b>: ' + item.price + '</p>'
 }
 

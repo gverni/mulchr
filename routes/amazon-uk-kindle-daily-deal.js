@@ -6,14 +6,14 @@ const scraper = require('../libs/scraper')
 var serviceName = 'am-uk-kindle-daily-deal'
 
 var rssHeader = {title: 'Amazon UK Kindle Daily Deals',
-description: 'Amazon UK Kindle Daily Deals',
-url: 'https:/mulchr.herokuapp.com/' + serviceName}
+  description: 'Amazon UK Kindle Daily Deals',
+  url: 'https:/mulchr.herokuapp.com/' + serviceName}
 
 function formatRssItem (item) {
   return '<p><img src="' + item.image + '"</p>' +
     '<p><b>Title</b>: ' + item.title + '</p>' +
     '<p><b>Author</b>: ' + item.author + '</p>' +
-    '<p><b>Reviews</b>: ' + item.rating + ' stars (' + item.reviewCount + ' reviews)</p>' +
+    (item.rating ? '<p><b>Reviews</b>: ' + item.rating + ' stars (' + item.reviewCount + ' reviews)</p>' : '') +
     '<p><b>Deal price</b>: ' + item.price + '</p>'
 }
 
