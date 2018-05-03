@@ -48,31 +48,31 @@ var selectors = {
 /* GET home page. */
 router.get('/', function (req, res, next) {
   scraper('https://www.amazon.co.uk/Kindle-Daily-Deals/b/ref=sv_kinc_5?node=5400977031', selectCarousel, selectors)
-  .then(function (response) {
-    res.setHeader('Content-Type', 'application/xml')
-    if (req.app.locals.cachedb.hasOwnProperty(serviceName) &&
+    .then(function (response) {
+      res.setHeader('Content-Type', 'application/xml')
+      if (req.app.locals.cachedb.hasOwnProperty(serviceName) &&
       req.app.locals.cachedb[serviceName][0].title === response[0].title) {
       // We compare the title, because Amazon is actually changing the url
       // for the same product
-      console.log('Using Cache')
-      response = req.app.locals.cachedb[serviceName]
-    } else {
-      console.log('Updating cache')
-      req.app.locals.cachedb[serviceName] = response
-      req.app.locals.updateCache()
-    }
-    res.send(rssify(rssHeader, response, formatRssItem))
-  })
-  .catch((error) => {
-    let serviceName = req.baseUrl.slice(1)
-    console.log(serviceName + ': ' + error)
-    // Send cache (if exists)
-    res.send(rssify(rssHeader,
-      req.app.locals.cachedb.hasOwnProperty(serviceName)
-        ? req.app.locals.cachedb[serviceName]
-        : [],
-      formatRssItem))
-  })
+        console.log('Using Cache')
+        response = req.app.locals.cachedb[serviceName]
+      } else {
+        console.log('Updating cache')
+        req.app.locals.cachedb[serviceName] = response
+        req.app.locals.updateCache()
+      }
+      res.send(rssify(rssHeader, response, formatRssItem))
+    })
+    .catch((error) => {
+      let serviceName = req.baseUrl.slice(1)
+      console.log(serviceName + ': ' + error)
+      // Send cache (if exists)
+      res.send(rssify(rssHeader,
+        req.app.locals.cachedb.hasOwnProperty(serviceName)
+          ? req.app.locals.cachedb[serviceName]
+          : [],
+        formatRssItem))
+    })
 })
 
 module.exports = router
