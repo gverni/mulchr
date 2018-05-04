@@ -2,6 +2,8 @@ var express = require('express')
 var router = express.Router()
 var rssify = require('../libs/rssify')
 const scraper = require('../libs/scraper')
+const debug = require('debug')('service')
+const fetch = require('node-fetch')
 
 var serviceName = 'am-it-kindle-offerta-lampo'
 
@@ -14,7 +16,8 @@ function formatRssItem (item) {
   '<p><b>Titolo</b>: ' + item.title + '</p>' +
   '<p><b>Autore</b>: ' + item.author + '</p>' +
   (item.rating ? '<p><b>Recensioni</b>: ' + item.rating + ' stelle (' + item.reviewCount + ' recensioni clienti)</p>' : '') +
-  '<p><b>prezzo</b>: ' + item.price + '</p>'
+  '<p><b>prezzo</b>: ' + item.price + '</p>' +
+  '<p><b>Description</b></p><p>' + item.description + '</p>'
 }
 
 function getText (elem) { return elem.text() }
@@ -47,7 +50,53 @@ var selectors = {
   price: { selector: '.acs_product-price__buying', fnExtractValue: getText },
   rating: { selector: '.a-icon-star-small', fnExtractValue: getRating },
   reviewCount: { selector: '.acs_product-rating__review-count', fnExtractValue: getText },
-  url: { selector: '.acs_product-title a', fnExtractValue: function (elem) { return 'https://amazon.it' + elem.prop('href') } }
+  url: { selector: '.acs_product-title a', fnExtractValue: function (elem) { return 'https://amazon.it' + elem.prop('href').split('/ref')[0] } },
+  id: { selector: '.acs_product-title a', fnExtractValue: function (elem) { return 'https://amazon.it' + elem.prop('href').split('/ref')[0] } }
+}
+
+function fnCheckCondition (text) {
+  return /<span id="ebooksProductTitle".*?>(.*?)<\/span>/g.exec(text) !== null
+}
+
+function fetchRecursive (url) {
+  return fetch(url)
+    .then((response) => response.text())
+    .then((responseText) => {
+      if (fnCheckCondition(responseText)) {
+        return Promise.resolve(responseText)
+      } else {
+        return fetchRecursive(url)
+      }
+    })
+}
+
+function postProcess (scrapedItems, req) {
+  if (req.app.locals.cachedb.hasOwnProperty(serviceName) &&
+  req.app.locals.cachedb[serviceName][0].id === scrapedItems[0].id) {
+  // We compare the title, because Amazon is actually changing the url
+  // for the same product
+    debug('Using Cache')
+    return Promise.resolve(req.app.locals.cachedb[serviceName])
+  } else {
+    var promises = []
+    scrapedItems.forEach((item) => {
+      promises.push(
+        fetchRecursive(item.url)
+          .then(responseText => {
+            item.title = /<span id="ebooksProductTitle".*?>(.*?)<\/span>/g.exec(responseText)[1]
+            item.description = /<div id="bookDescription_feature_div"[\s\S]*?<noscript>[\s\S]*?<div>([\s\S]*?)<\/div>/g.exec(responseText)[1]
+          })
+      )
+    })
+
+    return Promise.all(promises)
+      .then(() => {
+        debug('Updating cache')
+        req.app.locals.cachedb[serviceName] = scrapedItems
+        req.app.locals.updateCache()
+        return Promise.resolve(scrapedItems)
+      })
+  }
 }
 
 /* GET home page. */
@@ -55,22 +104,15 @@ router.get('/', function (req, res, next) {
   scraper('https://www.amazon.it/Offerta-Lampo-Kindle/b/ref=amb_link_3?ie=UTF8&node=5689487031', selectCarousel, selectors)
     .then(function (response) {
       res.setHeader('Content-Type', 'application/xml')
-      if (req.app.locals.cachedb.hasOwnProperty(serviceName) &&
-        req.app.locals.cachedb[serviceName][0].title === response[0].title) {
-        // We compare the title, because Amazon is actually changing the url
-        // for the same product
-        console.log('Using Cache')
-        response = req.app.locals.cachedb[serviceName]
-      } else {
-        console.log('Updating cache')
-        req.app.locals.cachedb[serviceName] = response
-        req.app.locals.updateCache()
-      }
-      res.send(rssify(rssHeader, response, formatRssItem))
+      postProcess(response, req)
+        .then((scrapedItems) => {
+          // debug(scrapedItems)
+          res.send(rssify(rssHeader, scrapedItems, formatRssItem))
+        })
     })
     .catch((error) => {
       let serviceName = req.baseUrl.slice(1)
-      console.log(serviceName + ': ' + error)
+      debug(serviceName + ': ' + error)
       // Send cache (if exists)
       res.send(rssify(rssHeader,
         req.app.locals.cachedb.hasOwnProperty(serviceName)
