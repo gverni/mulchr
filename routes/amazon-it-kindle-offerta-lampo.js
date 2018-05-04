@@ -17,7 +17,7 @@ function formatRssItem (item) {
   '<p><b>Autore</b>: ' + item.author + '</p>' +
   (item.rating ? '<p><b>Recensioni</b>: ' + item.rating + ' stelle (' + item.reviewCount + ' recensioni clienti)</p>' : '') +
   '<p><b>prezzo</b>: ' + item.price + '</p>' +
-  '<p><b>Description</b></p><p>' + item.description + '</p>'
+  '<p><b>Sinossi</b></p><p>' + item.description + '</p>'
 }
 
 function getText (elem) { return elem.text() }
