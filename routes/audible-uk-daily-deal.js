@@ -3,7 +3,7 @@ var router = express.Router()
 var rssify = require('../libs/rssify')
 const scraper = require('../libs/scraper')
 
-var serviceName = 'audible-uk-daily-deal'
+var serviceName = 'au-uk-daily-deal'
 
 var rssHeader = {title: 'Audible UK Daily Deal',
   description: 'Audible UK Daily Deal',
