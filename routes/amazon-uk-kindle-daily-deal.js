@@ -43,18 +43,14 @@ var selectors = {
   price: { selector: '.acs_product-price__buying', fnExtractValue: getText },
   rating: { selector: '.a-icon-star-small', fnExtractValue: getRating },
   reviewCount: { selector: '.acs_product-rating__review-count', fnExtractValue: getText },
-  url: { selector: '.acs_product-title a', fnExtractValue: function (elem) { return 'https://amazon.co.uk' + elem.prop('href') } }
+  url: { selector: '.acs_product-title a', fnExtractValue: function (elem) { return 'https://amazon.co.uk' + elem.prop('href').split('/ref')[0] } },
+  id: { selector: '.acs_product-title a', fnExtractValue: function (elem) { return 'https://amazon.co.uk' + elem.prop('href').split('/ref')[0] } }
 }
 
 /* GET home page. */
 router.get('/', function (req, res, next) {
   scraper('https://www.amazon.co.uk/Kindle-Daily-Deals/b/ref=sv_kinc_5?node=5400977031', selectCarousel, selectors)
     .then(function (response) {
-      // Post-processing response (basic)
-      response.forEach((result) => {
-        // Assigning an id before generating the rss
-        result.id = result.title
-      })
       res.setHeader('Content-Type', 'application/xml')
       // Change the following check to .id tomorrow
       if (req.app.locals.cachedb.hasOwnProperty(serviceName) &&
