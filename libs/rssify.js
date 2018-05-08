@@ -38,7 +38,7 @@ function rssify (channelInfo, itemsList, fnFormatDescription) {
   itemsList.forEach((item) => {
     let tmpFeedItem = '<item>' +
             '<title>' + item.title + '</title>' +
-            '<guid isPermaLink="true">' + uriEncodeUrl(item.url) + '</guid>' + // TODO: change productUrl to product in existing scraper
+            '<guid isPermaLink="false">' + item.id + '</guid>' +
             '<link>' + uriEncodeUrl(item.url) + '</link>' +
             '<description><![CDATA[' + fnFormatDescription(item) + ']]></description>' +
             '</item>'
