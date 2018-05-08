@@ -2,7 +2,7 @@ var express = require('express')
 var router = express.Router()
 var rssify = require('../libs/rssify')
 const scraper = require('../libs/scraper')
-const debug = require('debug')('service')
+const debug = require('debug')('service:am-it-kindle-offerta-lampo')
 const fetch = require('node-fetch')
 
 var serviceName = 'am-it-kindle-offerta-lampo'
@@ -111,8 +111,7 @@ router.get('/', function (req, res, next) {
         })
     })
     .catch((error) => {
-      let serviceName = req.baseUrl.slice(1)
-      debug(serviceName + ': ' + error)
+      debug(error + '\n Using cache')
       // Send cache (if exists)
       res.send(rssify(rssHeader,
         req.app.locals.cachedb.hasOwnProperty(serviceName)
