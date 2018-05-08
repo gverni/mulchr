@@ -2,6 +2,7 @@ var express = require('express')
 var router = express.Router()
 var rssify = require('../libs/rssify')
 const scraper = require('../libs/scraper')
+const debug = require('debug')('service:am-uk-kindle-daily-deal')
 
 var serviceName = 'am-uk-kindle-daily-deal'
 
@@ -60,18 +61,17 @@ router.get('/', function (req, res, next) {
       req.app.locals.cachedb[serviceName][0].title === response[0].title) {
       // We compare the title, because Amazon is actually changing the url
       // for the same product
-        console.log('Using Cache')
+        debug('Using Cache')
         response = req.app.locals.cachedb[serviceName]
       } else {
-        console.log('Updating cache')
+        debug('Updating cache')
         req.app.locals.cachedb[serviceName] = response
         req.app.locals.updateCache()
       }
       res.send(rssify(rssHeader, response, formatRssItem))
     })
     .catch((error) => {
-      let serviceName = req.baseUrl.slice(1)
-      console.log(serviceName + ': ' + error)
+      debug(error + '\n Using cache')
       // Send cache (if exists)
       res.send(rssify(rssHeader,
         req.app.locals.cachedb.hasOwnProperty(serviceName)
