@@ -49,7 +49,13 @@ var selectors = {
 router.get('/', function (req, res, next) {
   scraper('https://www.amazon.co.uk/Kindle-Daily-Deals/b/ref=sv_kinc_5?node=5400977031', selectCarousel, selectors)
     .then(function (response) {
+      // Post-processing response (basic)
+      response.forEach((result) => {
+        // Assigning an id before generating the rss
+        result.id = result.title
+      })
       res.setHeader('Content-Type', 'application/xml')
+      // Change the following check to .id tomorrow
       if (req.app.locals.cachedb.hasOwnProperty(serviceName) &&
       req.app.locals.cachedb[serviceName][0].title === response[0].title) {
       // We compare the title, because Amazon is actually changing the url
