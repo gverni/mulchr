@@ -13,16 +13,25 @@ function scrape (url, fnSectionSelector, itemsSelectors) {
         return Promise.reject(new Error('Section not found'))
       } else {
         for (let key in itemsSelectors) {
-          if (results.length === 0) {
-            $(itemsSelectors[key].selector, section).each(function (index) {
-              let tmpObj = {}
-              tmpObj[key] = itemsSelectors[key].fnExtractValue($(this))
-              results.push(tmpObj)
-            })
-          } else {
-            $(itemsSelectors[key].selector, section).each(function (index) {
-              results[index][key] = itemsSelectors[key].fnExtractValue($(this))
-            })
+          try {
+            if (results.length === 0) {
+              $(itemsSelectors[key].selector, section).each(function (index) {
+                let tmpObj = {}
+                tmpObj[key] = itemsSelectors[key].fnExtractValue($(this))
+                results.push(tmpObj)
+              })
+            } else {
+              let elements = $(itemsSelectors[key].selector, section)
+              if (elements.length !== results.length) {
+                throw new Error('Number of ' + key + ' elements found (' + elements.length +
+                ') + different from number of elements in array (' + results.length + ')')
+              }
+              elements.each(function (index) {
+                results[index][key] = itemsSelectors[key].fnExtractValue($(this))
+              })
+            }
+          } catch (error) {
+            debug('scrape: ' + error)
           }
         }
         debug(results)
