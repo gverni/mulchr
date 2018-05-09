@@ -52,11 +52,8 @@ router.get('/', function (req, res, next) {
   scraper('https://www.amazon.co.uk/Kindle-Daily-Deals/b/ref=sv_kinc_5?node=5400977031', selectCarousel, selectors)
     .then(function (response) {
       res.setHeader('Content-Type', 'application/xml')
-      // Change the following check to .id tomorrow
       if (req.app.locals.cachedb.hasOwnProperty(serviceName) &&
-      req.app.locals.cachedb[serviceName][0].title === response[0].title) {
-      // We compare the title, because Amazon is actually changing the url
-      // for the same product
+      req.app.locals.cachedb[serviceName][0].id === response[0].id) {
         debug('Using Cache')
         response = req.app.locals.cachedb[serviceName]
       } else {
