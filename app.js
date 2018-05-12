@@ -4,6 +4,8 @@ var path = require('path')
 var cookieParser = require('cookie-parser')
 var logger = require('morgan')
 var jsonfile = require('jsonfile')
+var fs = require('fs')
+const debug = require('debug')('app')
 const { Client } = require('pg')
 
 // var indexRouter = require('./routes/index');
@@ -20,7 +22,13 @@ var app = express()
 app.set('views', path.join(__dirname, 'views'))
 app.set('view engine', 'ejs')
 
-app.use(logger('dev'))
+if (process.env.NODE_ENV === 'test') {
+  if (fs.existsSync('./cachedb.json')) {
+    fs.unlinkSync('./cachedb.json')
+  }
+} else {
+  app.use(logger('dev'))
+}
 app.use(express.json())
 app.use(express.urlencoded({ extended: false }))
 app.use(cookieParser())
@@ -33,18 +41,18 @@ if (process.env.DATABASE_URL) {
       connectionString: process.env.DATABASE_URL,
       ssl: true
     })
-    console.log('PG: update cache')
+    debug('PG: update cache')
     client.connect()
-    console.log('PG: Emptying table')
+    debug('PG: Emptying table')
     client.query('DELETE FROM saks')
       .then(() => {
         let sql = 'INSERT INTO saks (cachedb) VALUES (\'' + JSON.stringify(app.locals.cachedb).replace(/'/g, "''") + '\')'
-        console.log(sql)
+        debug(sql)
         return client.query(sql)
       })
       .then(() => { client.end() })
       .catch((error) => {
-        console.log('PG: Error updating cache: ' + error)
+        debug('PG: Error updating cache: ' + error)
         client.end()
       })
   }
@@ -57,34 +65,34 @@ if (process.env.DATABASE_URL) {
   client.connect()
   client.query('SELECT * FROM saks;')
     .then((res) => {
-      console.log('PG: returned rows from saks')
+      debug('PG: returned rows from saks')
       if (res.rows.length === 0) {
         // Table empty
-        console.log('PG: Empty table')
+        debug('PG: Empty table')
         app.locals.cachedb = {}
       } else {
         for (let row of res.rows) {
-          console.log(JSON.stringify(row))
+          debug(JSON.stringify(row))
           app.locals.cachedb = row.cachedb
         }
       }
       client.end()
     })
     .catch((error) => {
-      console.log('PG: error reading DB ' + error)
+      debug('PG: error reading DB ' + error)
       if (error.toString() === 'error: relation "saks" does not exist') {
         client.query('CREATE TABLE saks (cachedb json);')
           .then(() => {
-            console.log('PG: created table saks')
+            debug('PG: created table saks')
             return client.query('INSERT INTO saks (cachedb) VALUES (\'{}\');')
           })
           .then(() => {
-            console.log('PG: added empty row for cache')
+            debug('PG: added empty row for cache')
             app.locals.cachedb = {}
             client.end()
           })
           .catch((error) => {
-            console.log('PG: Error in creating TABLE: ' + error)
+            debug('PG: Error in creating TABLE: ' + error)
             client.end()
           })
       }
@@ -92,17 +100,17 @@ if (process.env.DATABASE_URL) {
 } else {
   // local json file
   app.locals.updateCache = function () {
-    console.log('Saving cache')
+    debug('Saving cache')
     try {
       jsonfile.writeFileSync('cachedb.json', app.locals.cachedb)
     } catch (error) {
-      console.log('Error writing file ' + error)
+      debug('Error writing file ' + error)
     }
   }
   try {
     app.locals.cachedb = jsonfile.readFileSync('cachedb.json')
   } catch (error) {
-    console.log('Error opening cachedb: ' + error)
+    debug('Error opening cachedb: ' + error)
     app.locals.cachedb = {}
     app.locals.updateCache()
   }
