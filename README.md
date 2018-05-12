@@ -1,3 +1,5 @@
+[![Build Status](https://travis-ci.org/gverni/mulchr.svg?branch=master)](https://travis-ci.org/gverni/mulchr)
+
 # mulchr
 _Mulching™ the internet since 2018_ :smirk:
  
