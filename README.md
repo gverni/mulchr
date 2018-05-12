@@ -1,4 +1,5 @@
-[![Build Status](https://travis-ci.org/gverni/mulchr.svg?branch=master)](https://travis-ci.org/gverni/mulchr)
+[![JavaScript Style Guide](https://img.shields.io/badge/code_style-standard-brightgreen.svg)](https://standardjs.com) [![Build Status](https://travis-ci.org/gverni/mulchr.svg?branch=master)](https://travis-ci.org/gverni/mulchr) 
+
 
 # mulchr
 _Mulching™ the internet since 2018_ :smirk:
