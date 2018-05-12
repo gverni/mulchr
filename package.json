@@ -4,7 +4,7 @@
   "private": true,
   "scripts": {
     "start": "node ./bin/www",
-    "test": "set DEBUG= & mocha"
+    "test": "set NODE_ENV=test& set DEBUG=service*& mocha"
   },
   "dependencies": {
     "cheerio": "^1.0.0-rc.2",
@@ -22,6 +22,7 @@
   },
   "devDependencies": {
     "chai": "^4.1.2",
-    "mocha": "^5.1.1"
+    "mocha": "^5.1.1",
+    "sinon": "^5.0.7"
   }
 }
