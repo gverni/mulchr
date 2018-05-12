@@ -54,7 +54,7 @@ router.get('/', function (req, res, next) {
       res.setHeader('Content-Type', 'application/xml')
       if (req.app.locals.cachedb.hasOwnProperty(serviceName) &&
       req.app.locals.cachedb[serviceName][0].id === response[0].id) {
-        debug('Using Cache')
+        debug('Using cache')
         response = req.app.locals.cachedb[serviceName]
       } else {
         debug('Updating cache')

@@ -75,7 +75,7 @@ function postProcess (scrapedItems, req) {
   req.app.locals.cachedb[serviceName][0].id === scrapedItems[0].id) {
   // We compare the title, because Amazon is actually changing the url
   // for the same product
-    debug('Using Cache')
+    debug('Using cache')
     return Promise.resolve(req.app.locals.cachedb[serviceName])
   } else {
     var promises = []
