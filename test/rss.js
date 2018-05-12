@@ -73,7 +73,7 @@ describe('Testing RSS services', function () {
       .then(() => fetch('http://127.0.0.1:3000/au-uk-daily-deal'))
       .then(response => response.text())
       .then(() => {
-        let callsNo = 0 
+        let callsNo = 0
         process.stderr.write.getCalls().forEach((spyCall) => {
           if (/.*?Using cache.*?/.test(spyCall.args[0])) { callsNo++ }
         })
