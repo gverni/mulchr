@@ -20,36 +20,63 @@ function formatRssItem (item) {
 
 function getText (elem) { return elem.text() }
 function getRating (elem) {
-  let res = /\sa-star-small-(.*?)\s/g.exec(elem.attr('class'))
-  if (res.length > 0) {
+  let res = /a-star-(.*)\s?/g.exec(elem.attr('class'))
+  if (res && res.length > 0) {
     return res[1].replace('-', '.')
+  } else {
+    return 'N/A'
   }
 }
-
-function selectCarousel ($) {
-  var tmpElem
-  $('.acswidget-carousel__title').each(function (i, elem) {
-    if ($(elem).text() === 'Today\'s Kindle Daily Deal') {
-      tmpElem = elem.parent.parent
-    }
-  })
-  return tmpElem
+function getPrice (elem) {
+  var price = elem.find('.s-price')
+  // Since i don't have access to $(), extract the text from
+  // the object returned from find. You can inspect the object
+  // with utils.inspect
+  return price[price.length - 1].children[0].data
 }
+
+// function selectCarousel ($) {
+//   var tmpElem
+//   $('.acswidget-carousel__title').each(function (i, elem) {
+//     if ($(elem).text() === 'Today\'s Kindle Daily Deal') {
+//       tmpElem = elem.parent.parent
+//     }
+//   })
+//   return tmpElem
+// }
+
+// var selectors = {
+//   title: { selector: '.acs_product-title span', fnExtractValue: getText },
+//   image: { selector: '.acs_product-image img', fnExtractValue: function (elem) { return elem.prop('src') } },
+//   author: { selector: '.acs_product-metadata__contributors', fnExtractValue: getText },
+//   price: { selector: '.acs_product-price__buying', fnExtractValue: getText },
+//   rating: { selector: '.a-icon-star-small', fnExtractValue: getRating },
+//   reviewCount: { selector: '.acs_product-rating__review-count', fnExtractValue: getText },
+//   url: { selector: '.acs_product-title a', fnExtractValue: function (elem) { return 'https://amazon.co.uk' + elem.prop('href').split('/ref')[0] } },
+//   id: { selector: '.acs_product-title a', fnExtractValue: function (elem) { return 'https://amazon.co.uk' + elem.prop('href').split('/ref')[0] } }
+// }
+
+// function selectResults ($) {
+//   return $('#s-results-list-atf')
+// }
 
 var selectors = {
-  title: { selector: '.acs_product-title span', fnExtractValue: getText },
-  image: { selector: '.acs_product-image img', fnExtractValue: function (elem) { return elem.prop('src') } },
-  author: { selector: '.acs_product-metadata__contributors', fnExtractValue: getText },
-  price: { selector: '.acs_product-price__buying', fnExtractValue: getText },
-  rating: { selector: '.a-icon-star-small', fnExtractValue: getRating },
-  reviewCount: { selector: '.acs_product-rating__review-count', fnExtractValue: getText },
-  url: { selector: '.acs_product-title a', fnExtractValue: function (elem) { return 'https://amazon.co.uk' + elem.prop('href').split('/ref')[0] } },
-  id: { selector: '.acs_product-title a', fnExtractValue: function (elem) { return 'https://amazon.co.uk' + elem.prop('href').split('/ref')[0] } }
+  title: { selector: 'h2.s-access-title', fnExtractValue: getText },
+  image: { selector: 'img.s-access-image', fnExtractValue: function (elem) { return elem.prop('src') } },
+  author: { selector: 'div.a-fixed-left-grid-col.a-col-right > div.a-row.a-spacing-small > div:nth-child(2) > span:nth-child(2)', fnExtractValue: getText },
+  price: { selector: '.a-span7', fnExtractValue: getPrice },
+  rating: { selector: '.a-icon-star', fnExtractValue: getRating },
+  reviewCount: { selector: '.s-result-item .a-span-last > div > a', fnExtractValue: getText },
+  url: { selector: '.s-result-item', fnExtractValue: function (elem) { return 'https://amazon.co.uk/' + elem.prop('data-asin') } },
+  id: { selector: '.s-result-item', fnExtractValue: function (elem) { return 'https://amazon.co.uk/' + elem.prop('data-asin') } }
 }
 
+//
+// Kindle deals page url: https://www.amazon.co.uk/Kindle-Daily-Deals/b/ref=sv_kinc_5?node=5400977031
+// Kindle daily deals page url: https://www.amazon.co.uk/s/ref=s9_acsd_hps_bw_clnk_r?node=341677031,!425595031,!425597031,5400977031,341689031&bbn=5400977031
 /* GET home page. */
 router.get('/', function (req, res, next) {
-  scraper('https://www.amazon.co.uk/Kindle-Daily-Deals/b/ref=sv_kinc_5?node=5400977031', selectCarousel, selectors)
+  scraper('https://www.amazon.co.uk/s/ref=s9_acsd_hps_bw_clnk_r?node=341677031,!425595031,!425597031,5400977031,341689031&bbn=5400977031', null, selectors)
     .then(function (response) {
       res.setHeader('Content-Type', 'application/xml')
       if (req.app.locals.cachedb.hasOwnProperty(serviceName) &&
