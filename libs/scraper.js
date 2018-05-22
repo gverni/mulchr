@@ -3,7 +3,11 @@ const cheerio = require('cheerio')
 const debug = require('debug')('scraper')
 
 function scrape (url, fnSectionSelector, itemsSelectors) {
-  return fetch(url)
+  return fetch(url, {
+    headers: {
+      'user-agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_11_6) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/65.0.3325.181 Safari/537.36'
+    }
+  })
     .then(response => response.text())
     .then(responseHtml => {
       const $ = cheerio.load(responseHtml)
@@ -17,7 +21,7 @@ function scrape (url, fnSectionSelector, itemsSelectors) {
             if (results.length === 0) {
               $(itemsSelectors[key].selector, section).each(function (index) {
                 let tmpObj = {}
-                tmpObj[key] = itemsSelectors[key].fnExtractValue($(this))
+                tmpObj[key] = itemsSelectors[key].fnExtractValue($(this), $)
                 results.push(tmpObj)
               })
             } else {
