@@ -15,24 +15,31 @@ function slackify (service, data) {
 }
 
 router.get('/', function (req, res, next) {
+  var availableServicesMessage = {}
+  availableServicesMessage['text'] = 'Let\'s get mulching...'
+  availableServicesMessage['attachments'] = [{'text': 'Choose the service:', 'attachment_type': 'default', 'actions': []}]
+  availableServices.forEach((service, index) => {
+    availableServicesMessage['attachments'][0]['actions'].push({'name': service, 'text': availableServicesTitle[index], 'type': 'button', 'value': service})
+  })
+
   res.setHeader('Content-Type', 'text/plain')
-  res.send('Placeholder for slack app installation\r\n' + JSON.stringify(slackify('am-it-kindle-offerta-lampo', req.app.locals.cachedb['am-it-kindle-offerta-lampo'])))
+  // res.send('Placeholder for slack app installation\r\n' + JSON.stringify(slackify('am-it-kindle-offerta-lampo', req.app.locals.cachedb['am-it-kindle-offerta-lampo'])))
+  res.send('Placeholder for slack app installation\r\n' + JSON.stringify(availableServicesMessage))
 })
 
 router.post('/', function (req, res, next) {
-  var service = req.body.text
+  var service = (req.body.payload) ? JSON.parse(req.body.payload).actions[0].value : req.body.text
   res.setHeader('Content-Type', 'application/json')
   if (service) {
     res.send(slackify(service, req.app.locals.cachedb[service]))
   } else {
-    res.send({
-      'text': 'Mulchr: List of available services:',
-      'attachments': [
-        {
-          'text': availableServices.join('\n')
-        }
-      ]
+    var availableServicesMessage = {}
+    availableServicesMessage['text'] = 'Let\'s get mulching...'
+    availableServicesMessage['attachments'] = [{'text': 'Choose the service:', 'callback_id': 'service', 'color': '#3AA3E3', 'attachment_type': 'default', 'actions': []}]
+    availableServices.forEach((service, index) => {
+      availableServicesMessage['attachments'][0]['actions'].push({'name': service, 'text': availableServicesTitle[index], 'type': 'button', 'value': service})
     })
+    res.send(availableServicesMessage)
   }
 })
 
