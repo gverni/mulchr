@@ -15,16 +15,18 @@ function slackify (service, data) {
 }
 
 router.get('/', function (req, res, next) {
-  var availableServicesMessage = {}
-  availableServicesMessage['text'] = 'Let\'s get mulching...'
-  availableServicesMessage['attachments'] = [{'text': 'Choose the service:', 'attachment_type': 'default', 'actions': []}]
-  availableServices.forEach((service, index) => {
-    availableServicesMessage['attachments'][0]['actions'].push({'name': service, 'text': availableServicesTitle[index], 'type': 'button', 'value': service})
-  })
+  // Use blow for debugging
+  // var availableServicesMessage = {}
+  // availableServicesMessage['text'] = 'Let\'s get mulching...'
+  // availableServicesMessage['attachments'] = [{'text': 'Choose the service:', 'attachment_type': 'default', 'actions': []}]
+  // availableServices.forEach((service, index) => {
+  //   availableServicesMessage['attachments'][0]['actions'].push({'name': service, 'text': availableServicesTitle[index], 'type': 'button', 'value': service})
+  // })
 
-  res.setHeader('Content-Type', 'text/plain')
-  // res.send('Placeholder for slack app installation\r\n' + JSON.stringify(slackify('am-it-kindle-offerta-lampo', req.app.locals.cachedb['am-it-kindle-offerta-lampo'])))
-  res.send('Placeholder for slack app installation\r\n' + JSON.stringify(availableServicesMessage))
+  // res.setHeader('Content-Type', 'text/plain')
+  // // res.send('Placeholder for slack app installation\r\n' + JSON.stringify(slackify('am-it-kindle-offerta-lampo', req.app.locals.cachedb['am-it-kindle-offerta-lampo'])))
+  // res.send('Placeholder for slack app installation\r\n' + JSON.stringify(availableServicesMessage))
+  res.redirect('slack-install.html')
 })
 
 router.post('/', function (req, res, next) {
