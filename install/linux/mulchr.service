@@ -1,0 +1,28 @@
+[Unit]
+Description=mulchr
+# Set dependencies to other services (optional)
+#After=mongodb.service
+
+[Service]
+# Run Grunt before starting the server (optional)
+#ExecStartPre=/usr/bin/grunt
+
+# Start the js-file starting the express server
+# Uncomment the two lines below and replace <mulchr_path>
+# with the real path 
+#ExecStart=/usr/bin/node <mulchr_path>/bin/www
+#WorkingDirectory=<mulchr_path>
+Restart=always
+RestartSec=10
+StandardOutput=syslog
+StandardError=syslog
+SyslogIdentifier=Express
+# Change to a non-root user (optional, but recommended)
+#User=<alternate user>
+#Group=<alternate group>
+# Set environment options
+# Uncomment line below and set the port number for mulchr
+#Environment=NODE_ENV=production PORT=<mulchr_port> 
+
+[Install]
+WantedBy=multi-user.target
