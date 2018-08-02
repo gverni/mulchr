@@ -7,6 +7,7 @@ var jsonfile = require('jsonfile')
 var fs = require('fs')
 const debug = require('debug')('app')
 const { Client } = require('pg')
+var bodyParser = require("body-parser")
 
 // var indexRouter = require('./routes/index');
 // var usersRouter = require('./routes/users');
@@ -15,8 +16,13 @@ var fetcher = require('./routes/fetcher')
 var amazonUkKindleDailyDeal = require('./routes/amazon-uk-kindle-daily-deal')
 var amazonItKindleOffertaLampo = require('./routes/amazon-it-kindle-offerta-lampo')
 var audibleUkDailyDeal = require('./routes/audible-uk-daily-deal')
+var slack = require('./routes/slack')
 
 var app = express()
+
+// Applying body-parser
+app.use(bodyParser.urlencoded({ extended: false }))
+app.use(bodyParser.json())
 
 // view engine setup
 app.set('views', path.join(__dirname, 'views'))
@@ -123,6 +129,7 @@ app.use('/fetcher', fetcher)
 app.use('/am-uk-kindle-daily-deal', amazonUkKindleDailyDeal)
 app.use('/am-it-kindle-offerta-lampo', amazonItKindleOffertaLampo)
 app.use('/au-uk-daily-deal', audibleUkDailyDeal)
+app.use('/slack', slack)
 
 // catch 404 and forward to error handler
 app.use(function (req, res, next) {
