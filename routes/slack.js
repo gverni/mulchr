@@ -1,5 +1,6 @@
 var express = require('express')
 var router = express.Router()
+const crypto = require('crypto')
 
 var availableServices = ['am-it-kindle-offerta-lampo', 'am-uk-kindle-daily-deal', 'au-uk-daily-deal' ]
 var availableServicesTitle = ['Amazon Italia Kindle Offerta Lampo', 'Amazon UK Kindle Daily Deal', 'Audible UK Daily deal']
@@ -16,15 +17,13 @@ function slackify (service, data) {
 
 function validateSlackRequest(httpReq) {
   const SlackAppSigningSecret = process.env.MLUCHR_SLACK_SIGNING_SECRET
-  var xSlackRequestTimeStamp = httpReq.get('X-Slack-Request-Timestamp')
-  var baseString = 'v0:' + xSlackRequestTimeStamp + ':' + req.body.payload
-  console.log('Slack validation base string: ' + baseString)
+  const xSlackRequestTimeStamp = httpReq.get('X-Slack-Request-Timestamp') 
+  const SlackSignature = httpReq.get('X-Slack-Signature') 
+  const baseString = 'v0:' + xSlackRequestTimeStamp + ':' + httpReq.body.payload
   const hash = 'v0=' + crypto.createHmac('sha256', SlackAppSigningSecret)
-    .update(baseString)
-    .digest('hex')
+     .update(baseString)
+     .digest('hex')
   
-  console.log('hash')
-  console.log(httpReq.get('X-Slack-Signature'))
   return (httpReq.get('X-Slack-Signature') === hash)
 }
 
