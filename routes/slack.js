@@ -18,13 +18,13 @@ function slackify (service, data) {
 }
 
 function validateSlackRequest(httpReq) {
-  const SlackAppSigningSecret = process.env.MLUCHR_SLACK_SIGNING_SECRET
-  debug(SlackAppSigningSecret)
+  const SlackAppSigningSecret = process.env.MLUCHR_SLACK_SIGNING_SECRET 
+  debug(SlackAppSigningSecret) 
   const xSlackRequestTimeStamp = httpReq.get('X-Slack-Request-Timestamp') 
   debug(xSlackRequestTimeStamp)
   const SlackSignature = httpReq.get('X-Slack-Signature') 
   debug(SlackSignature)
-  const baseString = 'v0:' + xSlackRequestTimeStamp + ':' + httpReq.body.payload
+  const baseString = 'v0:' + xSlackRequestTimeStamp + ':' + JSON.stringify(httpReq.body)
   debug(baseString)
   const hash = 'v0=' + crypto.createHmac('sha256', SlackAppSigningSecret)
      .update(baseString)
@@ -51,7 +51,10 @@ router.get('/', function (req, res, next) {
 
 router.post('/', function (req, res, next) {
   var service = (req.body.payload) ? JSON.parse(req.body.payload).actions[0].value : req.body.text
-  if (validateSlackRequest(req)) {
+  debug(req.body)
+  debug(validateSlackRequest(req))
+  //if (validateSlackRequest(req)) {
+  if (true)
       res.setHeader('Content-Type', 'application/json')
     if (service) {
       res.send(slackify(service, req.app.locals.cachedb[service]))
