@@ -54,7 +54,7 @@ router.post('/', function (req, res, next) {
   debug(req.body)
   debug(validateSlackRequest(req))
   //if (validateSlackRequest(req)) {
-  if (true)
+  if (true) {
       res.setHeader('Content-Type', 'application/json')
     if (service) {
       res.send(slackify(service, req.app.locals.cachedb[service]))
