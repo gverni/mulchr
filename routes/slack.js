@@ -2,6 +2,7 @@ var express = require('express')
 var router = express.Router()
 const crypto = require('crypto')
 const debug = require('debug')('slack')
+const querystring = require('querystring')
 
 
 var availableServices = ['am-it-kindle-offerta-lampo', 'am-uk-kindle-daily-deal', 'au-uk-daily-deal' ]
@@ -24,7 +25,7 @@ function validateSlackRequest(httpReq) {
   debug(xSlackRequestTimeStamp)
   const SlackSignature = httpReq.get('X-Slack-Signature') 
   debug(SlackSignature)
-  const baseString = 'v0:' + xSlackRequestTimeStamp + ':' + JSON.stringify(httpReq.body)
+  const baseString = 'v0:' + xSlackRequestTimeStamp + ':' + querystring.stringify(httpReq.body)
   debug(baseString)
   const hash = 'v0=' + crypto.createHmac('sha256', SlackAppSigningSecret)
      .update(baseString)
@@ -51,8 +52,7 @@ router.get('/', function (req, res, next) {
 
 router.post('/', function (req, res, next) {
   var service = (req.body.payload) ? JSON.parse(req.body.payload).actions[0].value : req.body.text
-  debug(req.body)
-  debug(validateSlackRequest(req))
+  debug('Validate: ' + validateSlackRequest(req))
   //if (validateSlackRequest(req)) {
   if (true) {
       res.setHeader('Content-Type', 'application/json')
