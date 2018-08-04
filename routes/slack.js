@@ -19,20 +19,15 @@ function slackify (service, data) {
 }
 
 function validateSlackRequest(httpReq) {
-  const SlackAppSigningSecret = process.env.MLUCHR_SLACK_SIGNING_SECRET 
-  debug(SlackAppSigningSecret) 
-  const xSlackRequestTimeStamp = httpReq.get('X-Slack-Request-Timestamp') 
-  debug(xSlackRequestTimeStamp)
-  const SlackSignature = httpReq.get('X-Slack-Signature') 
-  debug(SlackSignature)
-  const baseString = 'v0:' + xSlackRequestTimeStamp + ':' + querystring.stringify(httpReq.body)
-  debug(baseString)
+  const SlackAppSigningSecret = process.env.MLUCHR_SLACK_SIGNING_SECRET || ''
+  const xSlackRequestTimeStamp = httpReq.get('X-Slack-Request-Timestamp') || ''
+  const SlackSignature = httpReq.get('X-Slack-Signature') || ''
+  const baseString = 'v0:' + xSlackRequestTimeStamp + ':' + (querystring.stringify(httpReq.body) || '')
   const hash = 'v0=' + crypto.createHmac('sha256', SlackAppSigningSecret)
      .update(baseString)
      .digest('hex')
-  debug(hash)
-
-  return (httpReq.get('X-Slack-Signature') === hash)
+  debug('Slack verifcation:\n Calculated Hash: ' + hash + '\n Slack-Signature: ' + SlackSignature)
+  return (SlackSignature === hash)
 }
 
 router.get('/', function (req, res, next) {
@@ -51,11 +46,9 @@ router.get('/', function (req, res, next) {
 })
 
 router.post('/', function (req, res, next) {
-  var service = (req.body.payload) ? JSON.parse(req.body.payload).actions[0].value : req.body.text
-  debug('Validate: ' + validateSlackRequest(req))
-  //if (validateSlackRequest(req)) {
-  if (true) {
-      res.setHeader('Content-Type', 'application/json')
+  if (validateSlackRequest(req)) {
+    res.setHeader('Content-Type', 'application/json')
+    var service = (req.body.payload) ? JSON.parse(req.body.payload).actions[0].value : req.body.text
     if (service) {
       res.send(slackify(service, req.app.locals.cachedb[service]))
     } else {
@@ -68,7 +61,7 @@ router.post('/', function (req, res, next) {
       res.send(availableServicesMessage)
     }
   } else {
-    // If it's not a slack request we send 403 error
+    // If it's not a validated slack request we send 403 error
     res.sendStatus(403)
   }
 })
