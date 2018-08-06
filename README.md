@@ -14,8 +14,9 @@ http://mulchr.herokuapp.com
 - Amazon Kindle Offerta Lampo (Italy): http://mulchr.herokuapp.com/am-it-kindle-offerta-lampo 
 - Audible daily deal (UK): http://mulchr.herokuapp.com/au-uk-daily-deal
 
+<!-- Not yet published 
 ## Slack 
 
 You can add the mulchr application to your slack workspace using the button below: 
 
-<a href="https://slack.com/oauth/authorize?scope=commands&client_id=293661224229.380443802117"><img alt="Add to Slack" height="40" width="139" src="https://platform.slack-edge.com/img/add_to_slack.png" srcset="https://platform.slack-edge.com/img/add_to_slack.png 1x, https://platform.slack-edge.com/img/add_to_slack@2x.png 2x" /></a>
+<a href="https://slack.com/oauth/authorize?scope=commands&client_id=293661224229.380443802117"><img alt="Add to Slack" height="40" width="139" src="https://platform.slack-edge.com/img/add_to_slack.png" srcset="https://platform.slack-edge.com/img/add_to_slack.png 1x, https://platform.slack-edge.com/img/add_to_slack@2x.png 2x" /></a> -->
