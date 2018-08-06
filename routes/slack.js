@@ -3,6 +3,7 @@ var router = express.Router()
 const crypto = require('crypto')
 const debug = require('debug')('slack')
 const querystring = require('querystring')
+const validateSlackRequest = require('validate-slack-request')
 
 
 var availableServices = ['am-it-kindle-offerta-lampo', 'am-uk-kindle-daily-deal', 'au-uk-daily-deal' ]
@@ -16,18 +17,6 @@ function slackify (service, data) {
     tmpObj.attachments.push({'text': element.title})
   })
   return tmpObj
-}
-
-function validateSlackRequest(httpReq) {
-  const SlackAppSigningSecret = process.env.MLUCHR_SLACK_SIGNING_SECRET || ''
-  const xSlackRequestTimeStamp = httpReq.get('X-Slack-Request-Timestamp') || ''
-  const SlackSignature = httpReq.get('X-Slack-Signature') || ''
-  const baseString = 'v0:' + xSlackRequestTimeStamp + ':' + (querystring.stringify(httpReq.body) || '')
-  const hash = 'v0=' + crypto.createHmac('sha256', SlackAppSigningSecret)
-     .update(baseString)
-     .digest('hex')
-  debug('Slack verifcation:\n Calculated Hash: ' + hash + '\n Slack-Signature: ' + SlackSignature)
-  return (SlackSignature === hash)
 }
 
 router.get('/', function (req, res, next) {
@@ -46,7 +35,7 @@ router.get('/', function (req, res, next) {
 })
 
 router.post('/', function (req, res, next) {
-  if (validateSlackRequest(req)) {
+  if (validateSlackRequest(process.env.MLUCHR_SLACK_SIGNING_SECRET, req)) {
     res.setHeader('Content-Type', 'application/json')
     var service = (req.body.payload) ? JSON.parse(req.body.payload).actions[0].value : req.body.text
     if (service) {
