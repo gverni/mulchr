@@ -68,7 +68,7 @@ var selectors = {
   rating: { selector: '.a-icon-star', fnExtractValue: getRating },
   reviewCount: { selector: '.s-result-item .a-span-last > div > a', fnExtractValue: getText },
   url: { selector: '.s-access-detail-page', fnExtractValue: function (elem) { return elem.prop('href') } },
-  id: { selector: '.s-result-item', fnExtractValue: function (elem) { return 'https://amazon.co.uk/' + elem.prop('data-asin') } }
+  id: { selector: '.s-result-item.celwidget', fnExtractValue: function (elem) { return 'https://amazon.co.uk/' + elem.prop('data-asin') } }
 }
 
 //
