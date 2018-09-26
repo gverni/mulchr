@@ -74,9 +74,11 @@ var selectors = {
 //
 // Kindle deals page url: https://www.amazon.co.uk/Kindle-Daily-Deals/b/ref=sv_kinc_5?node=5400977031
 // Kindle daily deals page url: https://www.amazon.co.uk/s/ref=s9_acsd_hps_bw_clnk_r?node=341677031,!425595031,!425597031,5400977031,341689031&bbn=5400977031
+// The above doesn;t work anymore from heroku servers
 /* GET home page. */
+
 router.get('/', function (req, res, next) {
-  scraper('https://www.amazon.co.uk/s/ref=s9_acsd_hps_bw_clnk_r?node=341677031,!425595031,!425597031,5400977031,341689031&bbn=5400977031', null, selectors)
+  scraper('https://amazon.co.uk/Kindle-Daily-Deals/b/?ie=UTF8&node=5400977031', null, selectors)
     .then(function (response) {
       res.setHeader('Content-Type', 'application/xml')
       if (req.app.locals.cachedb.hasOwnProperty(serviceName) &&
