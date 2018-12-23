@@ -14,7 +14,7 @@ function scrape (url, fnSectionSelector, itemsSelectors) {
       var section = (fnSectionSelector) ? fnSectionSelector($) : null // TODO: handle error in finding section
       let results = []
       if (section === undefined) {
-        return Promise.reject(new Error('Section not found'))
+        return Promise.reject(new Error(`Section ${section} not found`))
       } else {
         for (let key in itemsSelectors) {
           try {
