@@ -4,6 +4,7 @@ var rssify = require('../libs/rssify')
 const scraper = require('../libs/scraper')
 const debug = require('debug')('service:am-it-kindle-offerta-lampo')
 const fetch = require('node-fetch')
+var entities = require('entities')
 
 var serviceName = 'am-it-kindle-offerta-lampo'
 
@@ -31,7 +32,7 @@ function getRating (elem) {
 function selectCarousel ($) {
   var tmpElem
   $('.acswidget-carousel__title').each(function (i, elem) {
-    if ($(elem).text() === 'Oggi in offerta lampo') {
+    if ($(elem).text() === 'L\'offerta lampo di oggi') {
       tmpElem = elem.parent.parent
     }
   })
@@ -83,7 +84,10 @@ function postProcess (scrapedItems, req) {
       promises.push(
         fetchRecursive(item.url)
           .then(responseText => {
-            item.title = /<span id="ebooksProductTitle".*?>(.*?)<\/span>/g.exec(responseText)[1]
+            /* The title cannot contains HTML entities otherwise the resultsing XML (rss)
+             * will not pass validation. We use entities lib to decode it
+             */
+            item.title = entities.decodeHTML(/<span id="ebooksProductTitle".*?>(.*?)<\/span>/g.exec(responseText)[1])
             item.description = /<div id="bookDescription_feature_div"[\s\S]*?<noscript>[\s\S]*?<div>([\s\S]*?)<\/div>/g.exec(responseText)[1]
           })
       )
