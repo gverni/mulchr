@@ -12,7 +12,7 @@ http://mulchr.herokuapp.com
 
 - Amazon Kindle Daily Deal (UK):  http://mulchr.herokuapp.com/am-uk-kindle-daily-deal
 - Amazon Kindle Offerta Lampo (Italy): http://mulchr.herokuapp.com/am-it-kindle-offerta-lampo 
-- Audible daily deal (UK): http://mulchr.herokuapp.com/au-uk-daily-deal
+- ~~Audible daily deal (UK): http://mulchr.herokuapp.com/au-uk-daily-deal~~ (No longer available)
 
 <!-- Not yet published 
 ## Slack 
