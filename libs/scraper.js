@@ -27,12 +27,16 @@ function scrape (url, fnSectionSelector, itemsSelectors) {
             } else {
               let elements = $(itemsSelectors[key].selector, section)
               if (elements.length !== results.length) {
-                throw new Error('Number of ' + key + ' elements found (' + elements.length +
+                debug('Warning: Number of ' + key + ' elements found (' + elements.length +
                 ') + different from number of elements in array (' + results.length + ')')
+                results.forEach((result, index) => {
+                  result[key] = '--'
+                })
+              } else {
+                results.forEach((result, index) => {
+                  result[key] = (elements[index]) ? itemsSelectors[key].fnExtractValue($(elements[index])) : '--'
+                })
               }
-              elements.each(function (index) {
-                results[index][key] = itemsSelectors[key].fnExtractValue($(this))
-              })
             }
           } catch (error) {
             debug('scrape: ' + error)
