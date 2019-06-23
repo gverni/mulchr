@@ -5,12 +5,13 @@ const scraper = require('../libs/scraper')
 const debug = require('debug')('service:am-it-kindle-offerta-lampo')
 const fetch = require('node-fetch')
 var entities = require('entities')
+const MAX_RETRIES = 3
 
 var serviceName = 'am-it-kindle-offerta-lampo'
 
-var rssHeader = {title: 'Amazon Italia Offerta Lampo Kindle',
+var rssHeader = { title: 'Amazon Italia Offerta Lampo Kindle',
   description: 'Amazon Italia Offerta Lampo Kindle',
-  url: 'https:/mulchr.herokuapp.com/' + serviceName}
+  url: 'https:/mulchr.herokuapp.com/' + serviceName }
 
 function formatRssItem (item) {
   return '<p><img src="' + item.image + '"</p>' +
@@ -59,14 +60,21 @@ function fnCheckCondition (text) {
   return /<span id="ebooksProductTitle".*?>(.*?)<\/span>/g.exec(text) !== null
 }
 
-function fetchRecursive (url) {
+function fetchRecursive (url, retry) {
+  retry = retry || 0
   return fetch(url)
     .then((response) => response.text())
     .then((responseText) => {
       if (fnCheckCondition(responseText)) {
         return Promise.resolve(responseText)
       } else {
-        return fetchRecursive(url)
+        if (retry <= MAX_RETRIES) {
+          debug(`Fetching ${url} - Retry ${retry}`)
+          retry++
+          return fetchRecursive(url, retry)
+        } else {
+          return Promise.reject(new Error('Max retries'))
+        }
       }
     })
 }
@@ -90,6 +98,9 @@ function postProcess (scrapedItems, req) {
             item.title = entities.decodeHTML(/<span id="ebooksProductTitle".*?>(.*?)<\/span>/g.exec(responseText)[1])
             item.description = /<div id="bookDescription_feature_div"[\s\S]*?<noscript>[\s\S]*?<div>([\s\S]*?)<\/div>/g.exec(responseText)[1]
           })
+          .catch(() => {
+            item.description = 'Non disponibile'
+          })
       )
     })
 
@@ -110,7 +121,7 @@ router.get('/', function (req, res, next) {
       res.setHeader('Content-Type', 'application/xml')
       postProcess(response, req)
         .then((scrapedItems) => {
-          // debug(scrapedItems)
+          debug(scrapedItems)
           res.send(rssify(rssHeader, scrapedItems, formatRssItem))
         })
     })
