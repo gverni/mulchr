@@ -35,7 +35,7 @@ router.get('/', function (req, res, next) {
 })
 
 router.post('/', function (req, res, next) {
-  if (validateSlackRequest(process.env.MLUCHR_SLACK_SIGNING_SECRET, req)) {
+  if (validateSlackRequest(process.env.MLUCHR_SLACK_SIGNING_SECRET, req, true)) {
     res.setHeader('Content-Type', 'application/json')
     var service = (req.body.payload) ? JSON.parse(req.body.payload).actions[0].value : req.body.text
     if (service) {
