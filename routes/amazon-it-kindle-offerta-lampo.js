@@ -33,7 +33,7 @@ function getRating (elem) {
 function selectCarousel ($) {
   var tmpElem
   $('.acswidget-carousel__title').each(function (i, elem) {
-    if ($(elem).text() === 'L\'offerta lampo di oggi') {
+    if ($(elem).text().trim() === 'L\'offerta lampo di oggi') {
       tmpElem = elem.parent.parent
     }
   })
