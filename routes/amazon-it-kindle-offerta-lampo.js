@@ -24,7 +24,8 @@ function formatRssItem (item) {
 
 function getText (elem) { return elem.text() }
 function getRating (elem) {
-  let res = /\sa-star-small-(.*?)\s/g.exec(elem.attr('class'))
+  console.log(elem)
+  let res = /\sa-star-medium-(.*)/g.exec(elem.attr('class'))
   if (res.length > 0) {
     return res[1].replace('-', '.')
   }
@@ -46,14 +47,14 @@ function getAuthor (elem) {
 }
 
 var selectors = {
-  title: { selector: '.acs_product-title span', fnExtractValue: getText },
-  image: { selector: '.acs_product-image img', fnExtractValue: function (elem) { return elem.prop('src') } },
-  author: { selector: '.a-carousel-card.acswidget-carousel__card', fnExtractValue: getAuthor },
-  price: { selector: '.acs_product-price__buying', fnExtractValue: getText },
-  rating: { selector: '.a-icon-star-small', fnExtractValue: getRating },
-  reviewCount: { selector: '.acs_product-rating__review-count', fnExtractValue: getText },
-  url: { selector: '.acs_product-title a', fnExtractValue: function (elem) { return 'https://amazon.it' + elem.prop('href').split('/ref')[0] } },
-  id: { selector: '.acs_product-title a', fnExtractValue: function (elem) { return 'https://amazon.it' + elem.prop('href').split('/ref')[0] } }
+  title: { selector: '.acs-product-block__product-title span span:first-of-type', fnExtractValue: getText },
+  image: { selector: '.acs-product-block__product-image a img', fnExtractValue: function (elem) { return elem.prop('src') } },
+  author: { selector: '.acs-product-block__contributor span:first-of-type', fnExtractValue: getText },
+  price: { selector: '.acs-product-block__price--buying', fnExtractValue: getText },
+  rating: { selector: '.a-icon-star-medium', fnExtractValue: getRating },
+  reviewCount: { selector: '.acs-product-block__rating__review-count', fnExtractValue: (elem) => elem.text().slice(1, -1)},
+  url: { selector: '.acs-product-block__product-title', fnExtractValue: function (elem) { return 'https://amazon.it' + elem.prop('href').split('/ref')[0] } },
+  id: { selector: '.acs-product-block__product-title', fnExtractValue: function (elem) { return 'https://amazon.it' + elem.prop('href').split('/ref')[0] } }
 }
 
 function fnCheckCondition (text) {
