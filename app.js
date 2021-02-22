@@ -40,6 +40,7 @@ app.use(express.urlencoded({ extended: false }))
 app.use(cookieParser())
 app.use(express.static(path.join(__dirname, 'public')))
 
+debug('Init DATABASE connection to ' + process.env.DATABASE_URL)
 if (process.env.DATABASE_URL) {
   // using postrgres database (heroku)
   app.locals.updateCache = function () {
