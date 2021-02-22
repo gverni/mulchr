@@ -70,6 +70,7 @@ if (process.env.DATABASE_URL) {
   })
 
   client.connect()
+  debug('DB client connected')
   client.query('SELECT * FROM saks;')
     .then((res) => {
       debug('PG: returned rows from saks')
