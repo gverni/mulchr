@@ -18,7 +18,7 @@ function formatRssItem (item) {
     '<p><b>Deal price</b>: ' + item.price + '</p>'
 }
 
-function getText (elem) { return elem.text() }
+function getText (elem) { return elem.text().trim() }
 function getRating (elem) {
   let res = /a-star-(.*)\s?/g.exec(elem.attr('class'))
   if (res && res.length > 0) {
