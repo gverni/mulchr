@@ -60,15 +60,26 @@ function getPrice (elem) {
 //   return $('#s-results-list-atf')
 // }
 
+// var selectors = {
+//   title: { selector: 'h2.s-access-title', fnExtractValue: getText },
+//   image: { selector: 'img.s-access-image', fnExtractValue: function (elem) { return elem.prop('src') } },
+//   author: { selector: 'div.a-fixed-left-grid-col.a-col-right > div.a-row.a-spacing-small > div:nth-child(2) > span:nth-child(2)', fnExtractValue: getText },
+//   price: { selector: '.a-span7', fnExtractValue: getPrice },
+//   rating: { selector: '.a-icon-star', fnExtractValue: getRating },
+//   reviewCount: { selector: '.s-result-item .a-span-last > div > a', fnExtractValue: getText },
+//   url: { selector: '.s-access-detail-page', fnExtractValue: function (elem) { return elem.prop('href') } },
+//   id: { selector: '.s-result-item.celwidget', fnExtractValue: function (elem) { return 'https://amazon.co.uk/' + elem.prop('data-asin') } }
+// }
+
 var selectors = {
-  title: { selector: 'h2.s-access-title', fnExtractValue: getText },
-  image: { selector: 'img.s-access-image', fnExtractValue: function (elem) { return elem.prop('src') } },
-  author: { selector: 'div.a-fixed-left-grid-col.a-col-right > div.a-row.a-spacing-small > div:nth-child(2) > span:nth-child(2)', fnExtractValue: getText },
-  price: { selector: '.a-span7', fnExtractValue: getPrice },
-  rating: { selector: '.a-icon-star', fnExtractValue: getRating },
-  reviewCount: { selector: '.s-result-item .a-span-last > div > a', fnExtractValue: getText },
-  url: { selector: '.s-access-detail-page', fnExtractValue: function (elem) { return elem.prop('href') } },
-  id: { selector: '.s-result-item.celwidget', fnExtractValue: function (elem) { return 'https://amazon.co.uk/' + elem.prop('data-asin') } }
+  title: { selector: '.apb-browse-searchresults-product h2', fnExtractValue: getText },
+  image: { selector: '.apb-browse-searchresults-product .a-image-container img', fnExtractValue: function (elem) { return elem.prop('src') } },
+  author: { selector: '.apb-browse-searchresults-product .a-size-mini', fnExtractValue: getText },
+  price: { selector: '.apb-browse-searchresults-product .a-price:nth-child(1) .a-offscreen', fnExtractValue: getPrice },
+  rating: { selector: '.apb-browse-searchresults-product .a-icon-star-small', fnExtractValue: getRating },
+  reviewCount: { selector: '.apb-browse-searchresults-product .a-spacing-top-micro .a-size-small', fnExtractValue: getText },
+  url: { selector: '.apb-browse-searchresults-product >a', fnExtractValue: function (elem) { return 'https://amazon.co.uk/' + elem.prop('href') } },
+  id: { selector: '.apb-browse-searchresults-product >a', fnExtractValue: function (elem) { return elem.prop('href') } }
 }
 
 //
