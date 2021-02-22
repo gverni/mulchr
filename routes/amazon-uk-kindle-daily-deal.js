@@ -92,6 +92,7 @@ router.get('/', function (req, res, next) {
   scraper('https://amazon.co.uk/Kindle-Daily-Deals/b/?ie=UTF8&node=5400977031', null, selectors)
     .then(function (response) {
       res.setHeader('Content-Type', 'application/xml')
+      debug('Locals ' + JSON.stringify(req.app.locals))
       if (req.app.locals.cachedb.hasOwnProperty(serviceName) &&
       req.app.locals.cachedb[serviceName][0].id === response[0].id) {
         debug('Using cache')
