@@ -5,7 +5,7 @@ var cookieParser = require('cookie-parser')
 var logger = require('morgan')
 var jsonfile = require('jsonfile')
 var fs = require('fs')
-const debug = require('debug')('app')
+const debug = require('debug')('appjs')
 const { Client } = require('pg')
 var bodyParser = require("body-parser")
 
